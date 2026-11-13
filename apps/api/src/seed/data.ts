@@ -323,7 +323,7 @@ const animPrempeh = {
   name: "Dr. Daniel Amatey Anim-Prempeh",
   biography:
     "Business strategist, development economist and financial and investment analyst. Director of Research and Economic Analysis at the Business and Financial Times and a part-time lecturer at Accra Business School.",
-  portrait: { src: "/images/people/daniel-anim-prempeh.png", alt: "Dr. Daniel Amatey Anim-Prempeh" },
+  portrait: { src: "/images/people/daniel-anim-prempeh.jpg", alt: "Dr. Daniel Amatey Anim-Prempeh" },
 };
 
 export const people = [
@@ -332,7 +332,7 @@ export const people = [
   person("Dr. Gabriel Odeh Apotey", "Vice President", "leadership", 2, {
     portrait: { src: "/images/people/gabriel-odeh-apotey.jpg", alt: "Dr. Gabriel Odeh Apotey" },
   }),
-  person("Dr. Moses O. Agoro", "Chief Executive Officer", "leadership", 3),
+  person("Dr. Moses O. Agoro", "Chief Executive Officer", "leadership", 3, { portrait: { src: "/images/people/moses-agoro.jpg", alt: "Dr. Moses O. Agoro" } }),
   person("Dr. Isaac Ntiamoah", "Registrar and Secretary of Council", "leadership", 4),
 
   // Council members
@@ -354,7 +354,7 @@ export const people = [
   person("Dr. Gabriel Apotey", "Head, Disciplinary Committee", "committee-heads", 6),
 
   // Secretariat (live "Our Team" page held only theme demo people)
-  person("Dr. Moses O. Agoro", "Chief Executive Officer", "staff", 1),
+  person("Dr. Moses O. Agoro", "Chief Executive Officer", "staff", 1, { portrait: { src: "/images/people/moses-agoro.jpg", alt: "Dr. Moses O. Agoro" } }),
   person("Dr. Isaac Ntiamoah", "Registrar", "staff", 2),
   person("Mr. Henry Ugah", "Programmes Manager", "staff", 3),
 ];
@@ -481,23 +481,22 @@ export const pages = [
         ],
       },
       {
-        type: "richText",
-        blocks: [
-          { type: "heading", level: 2, text: "Welcome from the Chief Executive Officer" },
-          p("Professional analysts are hybrid professionals, multi-tasking day to day to make the economy worthwhile, especially the financial and investment sectors, yet distinct from other professions such as accountancy, economics and audit."),
-          p("At CIFIAG we are concerned with:"),
-          {
-            type: "list",
-            ordered: false,
-            items: [
-              "Regulating the activities of the financial and investment analysis profession in Ghana.",
-              "Securing the professional status needed to promote the study and development of the art and science of finance and investment in private practice, industry, commerce and the public sector.",
-              "Economic direction for prosperity.",
-              "Developing ethics in finance and investment that meet national, regional and international standards.",
-            ],
-          },
-          p("Dr. Moses O. Agoro, Chief Executive Officer"),
+        type: "leaderMessage",
+        heading: "Welcome from the Chief Executive Officer",
+        quote:
+          "Professional analysts are hybrid professionals, multi-tasking day to day to make the economy worthwhile, especially the financial and investment sectors, yet distinct from other professions such as accountancy, economics and audit.",
+        intro: "At CIFIAG we are concerned with:",
+        points: [
+          "Regulating the activities of the financial and investment analysis profession in Ghana.",
+          "Securing the professional status needed to promote the study and development of the art and science of finance and investment in private practice, industry, commerce and the public sector.",
+          "Economic direction for prosperity.",
+          "Developing ethics in finance and investment that meet national, regional and international standards.",
         ],
+        person: {
+          name: "Dr. Moses O. Agoro",
+          role: "Chief Executive Officer",
+          portrait: { src: "/images/people/moses-agoro.jpg", alt: "Dr. Moses O. Agoro" },
+        },
       },
       {
         type: "cardGrid",

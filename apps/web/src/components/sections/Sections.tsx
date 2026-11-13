@@ -15,6 +15,7 @@ import { Icon, type IconName } from "../primitives/Icon";
 import { ButtonLink, SmartLink } from "../primitives/SmartLink";
 import { EmptyState } from "../states";
 import { SlideControls, SlideLayer, useSlider } from "./HeroSlider";
+import { LeaderMessage } from "./LeaderMessage";
 import { PersonCard } from "./PersonCard";
 
 type Of<T extends Section["type"]> = Extract<Section, { type: T }>;
@@ -481,6 +482,8 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
             return <DocumentList key={i} section={section} />;
           case "callToAction":
             return <CallToAction key={i} section={section} />;
+          case "leaderMessage":
+            return <LeaderMessage key={i} section={section} />;
           case "contactDetails":
             return <ContactDetails key={i} section={section} />;
           default:

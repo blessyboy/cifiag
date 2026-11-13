@@ -172,6 +172,15 @@ export type Section =
     }
   | { type: "documentList"; heading?: string; emptyState: string; documents: DocumentItem[] }
   | { type: "callToAction"; heading: string; text?: string; actions: Action[] }
+  | {
+      type: "leaderMessage";
+      heading: string;
+      quote: string;
+      intro?: string;
+      points: string[];
+      person: { name: string; role: string; portrait?: { src: string; alt: string } };
+      action?: Action;
+    }
   | { type: "contactDetails"; heading: string };
 
 export interface PageContent {

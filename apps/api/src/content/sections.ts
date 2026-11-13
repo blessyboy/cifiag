@@ -80,6 +80,20 @@ export const sectionSchema = z.discriminatedUnion("type", [
     actions: z.array(action).min(1).max(2),
   }),
   z.object({
+    // A signed message from an office holder, e.g. the CEO's welcome.
+    type: z.literal("leaderMessage"),
+    heading: z.string().min(1).max(120),
+    quote: z.string().min(1).max(600),
+    intro: z.string().max(200).optional(),
+    points: z.array(z.string().min(1)).max(6).default([]),
+    person: z.object({
+      name: z.string().min(1),
+      role: z.string().min(1),
+      portrait: image.optional(),
+    }),
+    action: action.optional(),
+  }),
+  z.object({
     type: z.literal("contactDetails"),
     heading: z.string().default("Contact details"),
   }),
