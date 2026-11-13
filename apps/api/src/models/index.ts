@@ -91,6 +91,8 @@ const membershipCategorySchema = new Schema(
     obligations: { type: [String], default: [] },
     evidence: { type: [String], default: [] },
     applicationMode: { type: String, enum: ["open", "closed", "invitation"], default: "open" },
+    // Optional card photo; without it the site shows a brand illustration.
+    image: { type: { _id: false, src: String, alt: String }, default: null },
     order: { type: Number, default: 0 },
     seo: { type: seo, default: {} },
     ...governance,

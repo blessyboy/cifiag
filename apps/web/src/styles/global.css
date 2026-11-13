@@ -828,8 +828,86 @@ a:hover { color: var(--color-accent-text); text-decoration-thickness: 2px; }
 .card:has(.card__link:focus-visible) { outline: 3px solid var(--color-focus); outline-offset: 2px; box-shadow: 0 0 0 5px var(--color-brand-strong); }
 .card__body { color: var(--color-text-muted); flex: 1; margin-bottom: var(--space-4); }
 .card__footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 24px; margin-top: auto; }
-.card__arrow { color: var(--color-brand); transition: transform 0.2s var(--ease), color 0.2s var(--ease); }
-.card:hover .card__arrow { color: var(--color-accent); transform: translateX(4px); }
+.card__heading-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-2); }
+.card__heading-row .card__title { margin: 0; }
+/* Short chip beside a title, e.g. designatory letters (6.1:1 contrast). */
+.card__tag {
+  flex-shrink: 0;
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  background: #fdecee;
+  color: var(--color-accent-text);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+/* Circular "go" affordance: outlined at rest, filled crest red on hover/focus. */
+.card__go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-strong);
+  color: var(--color-brand);
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.card__arrow { transition: transform 0.2s var(--ease); }
+.card:hover .card__go, .card:has(.card__link:focus-visible) .card__go { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
+.card:hover .card__arrow, .card:has(.card__link:focus-visible) .card__arrow { transform: translateX(2px); }
+
+/* --- Cards with a visual header (membership grades) --- */
+.card--visual { padding-top: 0; overflow: hidden; }
+.card--visual::before { display: none; }
+.card__visual {
+  position: relative;
+  margin: 0 calc(-1 * var(--space-5)) var(--space-5);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background:
+    radial-gradient(70% 90% at 100% 0%, rgb(0 144 216 / 38%), transparent 70%),
+    linear-gradient(150deg, var(--color-brand) 0%, var(--color-brand-strong) 80%);
+}
+/* Wide two-up grids: a shorter crop so the visual supports, not crowds, the text. */
+@media (min-width: 40rem) { .card-grid--2 .card__visual { aspect-ratio: 21 / 8; } }
+.card__art, .card__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease);
+}
+.card--visual:hover .card__art, .card--visual:hover .card__photo { transform: scale(1.04); }
+/* Designatory letters sit in the same top-right spot on every grade card
+   (DOM order keeps them after the title for screen readers). */
+.card--visual { position: relative; }
+.card--visual .card__tag {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 1;
+  padding: 0.25rem 0.65rem;
+  background: #fff;
+  color: var(--color-brand);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 18%);
+}
+/* Decorative progression marker (Student 01 → Fellow 04). */
+.card__step {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 16%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 28%);
+  color: #fff;
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(4px);
+}
 
 .person-card {
   display: flex;

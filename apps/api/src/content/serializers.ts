@@ -55,6 +55,7 @@ export function membershipSummary(m: WithMeta<MembershipCategoryDoc>) {
     designation: m.designation,
     summary: m.summary,
     applicationMode: m.applicationMode,
+    image: m.image?.src ? { src: m.image.src, alt: m.image.alt ?? "" } : null,
     href: `/membership/${m.slug}`,
   };
 }

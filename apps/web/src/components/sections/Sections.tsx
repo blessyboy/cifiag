@@ -16,6 +16,7 @@ import { ButtonLink, SmartLink } from "../primitives/SmartLink";
 import { EmptyState } from "../states";
 import { SlideControls, SlideLayer, useSlider } from "./HeroSlider";
 import { LeaderMessage } from "./LeaderMessage";
+import { MembershipVisual } from "./MembershipArt";
 import { PersonCard } from "./PersonCard";
 
 type Of<T extends Section["type"]> = Extract<Section, { type: T }>;
@@ -116,22 +117,48 @@ interface CardProps {
   headingLevel: "h2" | "h3";
   eyebrow?: ReactNode;
   status?: Status | null;
+  /** Decorative header (illustration or photo). */
+  visual?: ReactNode;
+  /** Decorative step marker shown on the visual, e.g. "01". */
+  step?: string;
+  /** Short chip beside the title, e.g. designatory letters. */
+  tag?: string | null;
 }
 
 /** Whole-card link with a single accessible name (the title) and an arrow cue. */
-export function LinkCard({ title, href, body, headingLevel: Title, eyebrow, status }: CardProps) {
+export function LinkCard({ title, href, body, headingLevel: Title, eyebrow, status, visual, step, tag }: CardProps) {
   return (
-    <article className="card">
+    <article className={visual ? "card card--visual" : "card"}>
+      {visual && (
+        <div className="card__visual">
+          {visual}
+          {step && (
+            <span className="card__step" aria-hidden="true">
+              {step}
+            </span>
+          )}
+        </div>
+      )}
       {eyebrow && <p className="card__eyebrow">{eyebrow}</p>}
-      <Title className="card__title">
-        <SmartLink href={href} className="card__link">
-          {title}
-        </SmartLink>
-      </Title>
+      <div className="card__heading-row">
+        <Title className="card__title">
+          <SmartLink href={href} className="card__link">
+            {title}
+          </SmartLink>
+        </Title>
+        {tag && (
+          <span className="card__tag">
+            <span className="visually-hidden">Designatory letters: </span>
+            {tag}
+          </span>
+        )}
+      </div>
       <p className="card__body">{body}</p>
       <div className="card__footer">
         {status ? <Badge tone={status.tone}>{status.label}</Badge> : <span />}
-        <Icon name="arrowRight" className="card__arrow" />
+        <span className="card__go" aria-hidden="true">
+          <Icon name="arrowRight" className="card__arrow" size={18} />
+        </span>
       </div>
     </article>
   );
@@ -157,14 +184,22 @@ export function CardGrid({ section }: { section: Of<"cardGrid"> }) {
   } else {
     content = (
       <ul className={`card-grid card-grid--${section.columns}`}>
-        {section.items.map((raw) => {
+        {section.items.map((raw, index) => {
           let card: Omit<CardProps, "headingLevel">;
           if (section.source === "programs") {
             const p = raw as ProgramSummary;
             card = { title: p.title, href: p.href, body: p.summary, status: intakeStatus[p.intakeStatus] };
           } else if (section.source === "membershipCategories") {
             const m = raw as MembershipSummary;
-            card = { title: m.name, href: m.href, body: m.summary, status: modeStatus[m.applicationMode] };
+            card = {
+              title: m.name,
+              href: m.href,
+              body: m.summary,
+              status: modeStatus[m.applicationMode],
+              tag: m.designation,
+              step: String(index + 1).padStart(2, "0"),
+              visual: <MembershipVisual slug={m.slug} image={m.image} />,
+            };
           } else {
             const n = raw as NewsSummary;
             const date = formatDate(n.publishedAt);

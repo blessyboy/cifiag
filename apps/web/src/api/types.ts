@@ -69,6 +69,8 @@ export interface MembershipSummary {
   designation: string | null;
   summary: string;
   applicationMode: "open" | "closed" | "invitation";
+  /** Optional card photo; null means the brand illustration is shown. */
+  image: { src: string; alt: string } | null;
   href: string;
 }
 
