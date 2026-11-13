@@ -89,6 +89,15 @@ describe("public content", () => {
     expect(past.items.every((p: { group: string }) => p.group === "past-presidents")).toBe(true);
   });
 
+  it("returns home hero slides with defaults applied", async () => {
+    const res = await request(app).get("/api/v1/content/pages/home");
+    const hero = res.body.data.sections[0];
+    expect(hero.type).toBe("hero");
+    expect(hero.slides.length).toBeGreaterThan(0);
+    expect(hero.slides[0]).toEqual({ src: expect.stringMatching(/^\/images\/hero\//), alt: "" });
+    expect(hero.slideIntervalMs).toBe(7000);
+  });
+
   it("returns a program with its examination stages", async () => {
     const res = await request(app).get("/api/v1/programs/chartered-professional-certification");
     expect(res.body.data.stages.map((s: { name: string }) => s.name)).toEqual([

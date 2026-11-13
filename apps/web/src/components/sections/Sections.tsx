@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import type {
   DocumentItem,
   FeeItem,
@@ -11,16 +11,38 @@ import type {
 } from "../../api/types";
 import { formatBytes, formatDate, formatMoney } from "../../lib/format";
 import { useSite } from "../../site/SiteContext";
+import { Icon, type IconName } from "../primitives/Icon";
 import { ButtonLink, SmartLink } from "../primitives/SmartLink";
 import { EmptyState } from "../states";
+import { SlideControls, SlideLayer, useSlider } from "./HeroSlider";
 import { PersonCard } from "./PersonCard";
 
 type Of<T extends Section["type"]> = Extract<Section, { type: T }>;
 
+/** Decorative motif echoing the crest's rising bar chart. */
+function HeroMotif() {
+  return (
+    <svg className="hero__motif" viewBox="0 0 400 320" aria-hidden="true" focusable="false">
+      <circle cx="250" cy="170" r="150" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.18" />
+      <circle cx="250" cy="170" r="112" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.12" />
+      {[0, 1, 2, 3, 4].map((i) => (
+        <rect key={i} x={170 + i * 36} y={230 - i * 30} width="22" height={30 + i * 30} rx="3" fill="currentColor" opacity={0.1 + i * 0.03} />
+      ))}
+      <path d="M150 230 L196 196 L232 206 L268 160 L304 150 L350 96" fill="none" stroke="var(--color-accent)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="350" cy="96" r="8" fill="var(--color-accent)" />
+    </svg>
+  );
+}
+
 export function Hero({ section, isFirst }: { section: Of<"hero">; isFirst: boolean }) {
   const Heading = isFirst ? "h1" : "h2";
+  const slides = section.slides ?? [];
+  const slider = useSlider(slides.length, section.slideIntervalMs ?? 7000);
+  const hasSlides = slides.length > 0;
+
   return (
-    <section className="hero">
+    <section className={`hero${hasSlides ? " hero--slider" : ""}`} {...(hasSlides ? slider.pauseHandlers : {})}>
+      {hasSlides ? <SlideLayer slides={slides} index={slider.index} /> : !section.image && <HeroMotif />}
       <div className="container hero__inner">
         <Heading className="hero__heading">{section.heading}</Heading>
         {section.summary && <p className="hero__summary">{section.summary}</p>}
@@ -34,6 +56,7 @@ export function Hero({ section, isFirst }: { section: Of<"hero">; isFirst: boole
           </div>
         )}
       </div>
+      {hasSlides && <SlideControls slider={slider} />}
     </section>
   );
 }
@@ -63,22 +86,59 @@ export function RichTextBlocks({ blocks }: { blocks: TextBlock[] }) {
   );
 }
 
-const intakeLabel: Record<ProgramSummary["intakeStatus"], string> = {
-  open: "Applications open",
-  closed: "Applications closed",
-  pending: "Intake dates to be announced",
+type Tone = "positive" | "neutral" | "muted";
+interface Status {
+  label: string;
+  tone: Tone;
+}
+
+const intakeStatus: Record<ProgramSummary["intakeStatus"], Status> = {
+  open: { label: "Applications open", tone: "positive" },
+  closed: { label: "Applications closed", tone: "muted" },
+  pending: { label: "Intake dates to be announced", tone: "neutral" },
 };
 
-const modeLabel: Record<MembershipSummary["applicationMode"], string | null> = {
+const modeStatus: Record<MembershipSummary["applicationMode"], Status | null> = {
   open: null,
-  closed: "Not accepting applications",
-  invitation: "By invitation",
+  closed: { label: "Not accepting applications", tone: "muted" },
+  invitation: { label: "By invitation", tone: "neutral" },
 };
+
+export function Badge({ tone = "neutral", children }: { tone?: Tone; children: string }) {
+  return <span className={`badge badge--${tone}`}>{children}</span>;
+}
+
+interface CardProps {
+  title: string;
+  href: string;
+  body: string;
+  headingLevel: "h2" | "h3";
+  eyebrow?: ReactNode;
+  status?: Status | null;
+}
+
+/** Whole-card link with a single accessible name (the title) and an arrow cue. */
+export function LinkCard({ title, href, body, headingLevel: Title, eyebrow, status }: CardProps) {
+  return (
+    <article className="card">
+      {eyebrow && <p className="card__eyebrow">{eyebrow}</p>}
+      <Title className="card__title">
+        <SmartLink href={href} className="card__link">
+          {title}
+        </SmartLink>
+      </Title>
+      <p className="card__body">{body}</p>
+      <div className="card__footer">
+        {status ? <Badge tone={status.tone}>{status.label}</Badge> : <span />}
+        <Icon name="arrowRight" className="card__arrow" />
+      </div>
+    </article>
+  );
+}
 
 export function CardGrid({ section }: { section: Of<"cardGrid"> }) {
   const headingId = useId();
   const cardHeading = section.heading ? "h3" : "h2";
-  const CardTitle = cardHeading;
 
   let content;
   if (section.items.length === 0) {
@@ -97,26 +157,26 @@ export function CardGrid({ section }: { section: Of<"cardGrid"> }) {
     content = (
       <ul className={`card-grid card-grid--${section.columns}`}>
         {section.items.map((raw) => {
-          let title: string, href: string, body: string, meta: string | null = null;
+          let card: Omit<CardProps, "headingLevel">;
           if (section.source === "programs") {
             const p = raw as ProgramSummary;
-            [title, href, body, meta] = [p.title, p.href, p.summary, intakeLabel[p.intakeStatus]];
+            card = { title: p.title, href: p.href, body: p.summary, status: intakeStatus[p.intakeStatus] };
           } else if (section.source === "membershipCategories") {
             const m = raw as MembershipSummary;
-            [title, href, body, meta] = [m.name, m.href, m.summary, modeLabel[m.applicationMode]];
+            card = { title: m.name, href: m.href, body: m.summary, status: modeStatus[m.applicationMode] };
           } else {
             const n = raw as NewsSummary;
-            [title, href, body, meta] = [n.title, n.href, n.summary, formatDate(n.publishedAt)];
+            const date = formatDate(n.publishedAt);
+            card = {
+              title: n.title,
+              href: n.href,
+              body: n.summary,
+              eyebrow: date && <time dateTime={n.publishedAt ?? undefined}>{date}</time>,
+            };
           }
           return (
-            <li key={href} className="card">
-              <CardTitle className="card__title">
-                <SmartLink href={href} className="card__link">
-                  {title}
-                </SmartLink>
-              </CardTitle>
-              <p className="card__body">{body}</p>
-              {meta && <p className="card__meta">{meta}</p>}
+            <li key={card.href}>
+              <LinkCard {...card} headingLevel={cardHeading} />
             </li>
           );
         })}
@@ -307,14 +367,14 @@ export function CallToAction({ section }: { section: Of<"callToAction"> }) {
   return (
     <section className="section">
       <div className="container">
-        <div className="cta-panel">
+        <div className="cta-band">
           <div>
-            <h2 className="cta-panel__heading">{section.heading}</h2>
-            {section.text && <p>{section.text}</p>}
+            <h2 className="cta-band__heading">{section.heading}</h2>
+            {section.text && <p className="cta-band__text">{section.text}</p>}
           </div>
           <div className="action-row">
             {section.actions.map((a) => (
-              <ButtonLink key={a.href} href={a.href} variant={a.variant === "primary" ? "primary" : "secondary"}>
+              <ButtonLink key={a.href} href={a.href} variant={a.variant === "primary" ? "primary" : "inverse"}>
                 {a.label}
               </ButtonLink>
             ))}
@@ -325,6 +385,20 @@ export function CallToAction({ section }: { section: Of<"callToAction"> }) {
   );
 }
 
+function ContactCard({ icon, title, children }: { icon: IconName; title: string; children: ReactNode }) {
+  return (
+    <li className="contact-card">
+      <span className="contact-card__icon">
+        <Icon name={icon} size={22} />
+      </span>
+      <div>
+        <h3 className="contact-card__title">{title}</h3>
+        {children}
+      </div>
+    </li>
+  );
+}
+
 export function ContactDetails({ section }: { section: Of<"contactDetails"> }) {
   const site = useSite();
   const c = site?.contact;
@@ -332,7 +406,7 @@ export function ContactDetails({ section }: { section: Of<"contactDetails"> }) {
 
   return (
     <section className="section">
-      <div className="container container--narrow">
+      <div className="container">
         <h2 className="section__heading">{section.heading}</h2>
         {!hasAny ? (
           <EmptyState>
@@ -340,35 +414,41 @@ export function ContactDetails({ section }: { section: Of<"contactDetails"> }) {
             published here soon.
           </EmptyState>
         ) : (
-          <dl className="contact-list">
+          <ul className="contact-grid">
             {c!.address.length > 0 && (
-              <>
-                <dt>Address</dt>
-                <dd>
-                  <address>{c!.address.map((l) => <span key={l} className="block">{l}</span>)}</address>
-                  {c!.mapUrl && <SmartLink href={c!.mapUrl}>View on a map</SmartLink>}
-                </dd>
-              </>
+              <ContactCard icon="mapPin" title="Address">
+                <address>{c!.address.map((l) => <span key={l} className="block">{l}</span>)}</address>
+                {c!.mapUrl && (
+                  <SmartLink href={c!.mapUrl} className="contact-card__action">
+                    View on a map
+                  </SmartLink>
+                )}
+              </ContactCard>
             )}
             {c!.phones.length > 0 && (
-              <>
-                <dt>Telephone</dt>
-                <dd>{c!.phones.map((p) => <a key={p} className="block" href={`tel:${p.replace(/\s+/g, "")}`}>{p}</a>)}</dd>
-              </>
+              <ContactCard icon="phone" title="Telephone">
+                {c!.phones.map((p) => (
+                  <a key={p} className="block contact-card__link" href={`tel:${p.replace(/\s+/g, "")}`}>
+                    {p}
+                  </a>
+                ))}
+              </ContactCard>
             )}
             {c!.emails.length > 0 && (
-              <>
-                <dt>Email</dt>
-                <dd>{c!.emails.map((e) => <a key={e} className="block" href={`mailto:${e}`}>{e}</a>)}</dd>
-              </>
+              <ContactCard icon="mail" title="Email">
+                {c!.emails.map((e) => (
+                  <a key={e} className="block contact-card__link" href={`mailto:${e}`}>
+                    {e}
+                  </a>
+                ))}
+              </ContactCard>
             )}
             {c!.officeHours && (
-              <>
-                <dt>Office hours</dt>
-                <dd>{c!.officeHours}</dd>
-              </>
+              <ContactCard icon="clock" title="Office hours">
+                <p>{c!.officeHours}</p>
+              </ContactCard>
             )}
-          </dl>
+          </ul>
         )}
         <p className="section__intro">An online enquiry form will be available in a later release.</p>
       </div>
@@ -385,7 +465,7 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
             return <Hero key={i} section={section} isFirst={i === 0} />;
           case "richText":
             return (
-              <section key={i} className="section">
+              <section key={i} className="section section--text">
                 <div className="container container--narrow">
                   <RichTextBlocks blocks={section.blocks} />
                 </div>

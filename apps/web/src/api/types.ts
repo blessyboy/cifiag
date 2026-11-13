@@ -142,7 +142,15 @@ export type TextBlock =
   | { type: "list"; ordered: boolean; items: string[] };
 
 export type Section =
-  | { type: "hero"; heading: string; summary?: string; image?: { src: string; alt: string }; actions: Action[] }
+  | {
+      type: "hero";
+      heading: string;
+      summary?: string;
+      image?: { src: string; alt: string };
+      slides: { src: string; alt: string }[];
+      slideIntervalMs: number;
+      actions: Action[];
+    }
   | { type: "richText"; blocks: TextBlock[] }
   | {
       type: "cardGrid";

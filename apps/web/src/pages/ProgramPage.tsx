@@ -89,29 +89,6 @@ export function ProgramPage() {
       </PageHeader>
 
       <div className="container detail-layout">
-        <div className="prose prose--wide">
-          <h2>Overview</h2>
-          {p.overview.map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
-
-          {p.audience && (
-            <>
-              <h2>Who it is for</h2>
-              <p>{p.audience}</p>
-            </>
-          )}
-
-          {p.stages.length > 0 && (
-            <>
-              <h2>Course content and exemption policy</h2>
-              {p.stages.map((s) => (
-                <Stage key={s.name} stage={s} showName />
-              ))}
-            </>
-          )}
-        </div>
-
         <aside className="fact-panel" aria-labelledby="program-facts">
           <h2 id="program-facts" className="fact-panel__heading">
             Key facts
@@ -142,6 +119,28 @@ export function ProgramPage() {
             Program outlines
           </SmartLink>
         </aside>
+        <div className="prose prose--wide">
+          <h2>Overview</h2>
+          {p.overview.map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+
+          {p.audience && (
+            <>
+              <h2>Who it is for</h2>
+              <p>{p.audience}</p>
+            </>
+          )}
+
+          {p.stages.length > 0 && (
+            <>
+              <h2>Course content and exemption policy</h2>
+              {p.stages.map((s) => (
+                <Stage key={s.name} stage={s} showName />
+              ))}
+            </>
+          )}
+        </div>
       </div>
     </>
   );

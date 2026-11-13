@@ -9,7 +9,8 @@ export function Footer() {
   return (
     <footer className="site-footer">
       <div className="container site-footer__grid">
-        <section aria-labelledby="footer-about">
+        <section aria-labelledby="footer-about" className="site-footer__brand">
+          <img className="site-footer__logo" src={site?.logo.src ?? "/logo.png"} alt="" width="72" height="64" loading="lazy" />
           <h2 id="footer-about" className="site-footer__heading">
             {site?.shortName ?? "CIFIAG"}
           </h2>

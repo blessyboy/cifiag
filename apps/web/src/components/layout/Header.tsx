@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
 import type { MenuItem } from "../../api/types";
 import { useSite } from "../../site/SiteContext";
+import { Icon } from "../primitives/Icon";
 import { ButtonLink } from "../primitives/SmartLink";
 
 /**
@@ -45,9 +46,7 @@ function NavItem({ item, open, onToggle, onClose }: {
             onClick={onToggle}
           >
             <span className="visually-hidden">{`${item.label} pages`}</span>
-            <svg aria-hidden="true" viewBox="0 0 12 12" width="12" height="12">
-              <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" />
-            </svg>
+            <Icon name="chevronDown" size={16} />
           </button>
         )}
       </div>
@@ -118,10 +117,7 @@ export function Header() {
 
         <div className="site-header__tools">
           <Link to="/search" className="icon-link" aria-label="Search">
-            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
-              <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
-              <path d="M15.5 15.5L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <Icon name="search" size={22} />
           </Link>
           {site && (
             <ButtonLink href={site.headerAction.href} variant="primary" className="site-header__cta">

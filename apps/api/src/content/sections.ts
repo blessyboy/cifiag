@@ -35,6 +35,10 @@ export const sectionSchema = z.discriminatedUnion("type", [
     heading: z.string().min(1).max(120),
     summary: z.string().max(400).optional(),
     image: image.optional(),
+    // Background slider. Images are decorative behind the heading, so alt is
+    // normally "". With no slides the hero shows the brand gradient instead.
+    slides: z.array(image).max(8).default([]),
+    slideIntervalMs: z.number().int().min(4000).max(15000).default(7000),
     actions: z.array(action).max(2).default([]),
   }),
   z.object({

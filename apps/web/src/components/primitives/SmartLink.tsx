@@ -23,7 +23,8 @@ export function SmartLink({ href, children, ...rest }: SmartLinkProps) {
 }
 
 interface ButtonLinkProps extends SmartLinkProps {
-  variant?: "primary" | "secondary" | "ghost";
+  /** `inverse` is the outline style for dark backgrounds (hero, CTA band). */
+  variant?: "primary" | "secondary" | "inverse" | "ghost";
   size?: "md" | "lg";
 }
 

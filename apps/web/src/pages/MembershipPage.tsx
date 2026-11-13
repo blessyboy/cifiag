@@ -43,18 +43,6 @@ export function MembershipPage() {
         {m.designation && <p className="page-header__award">Designatory letters: {m.designation}</p>}
       </PageHeader>
       <div className="container detail-layout">
-        <div className="prose">
-          <ListBlock title="Eligibility" items={m.eligibility} />
-          <ListBlock title="Benefits" items={m.benefits} />
-          <ListBlock title="Obligations" items={m.obligations} />
-          <ListBlock title="Evidence you will need" items={m.evidence} />
-          <h2>How applications are reviewed</h2>
-          <p>
-            An application officer checks your evidence and may ask for more information. You will be told the outcome
-            by email, quoting your application reference.
-          </p>
-        </div>
-
         <aside className="fact-panel" aria-labelledby="membership-apply">
           <h2 id="membership-apply" className="fact-panel__heading">
             Apply
@@ -77,6 +65,17 @@ export function MembershipPage() {
             <p className="fact-panel__status">This category is not accepting applications at the moment.</p>
           )}
         </aside>
+        <div className="prose">
+          <ListBlock title="Eligibility" items={m.eligibility} />
+          <ListBlock title="Benefits" items={m.benefits} />
+          <ListBlock title="Obligations" items={m.obligations} />
+          <ListBlock title="Evidence you will need" items={m.evidence} />
+          <h2>How applications are reviewed</h2>
+          <p>
+            An application officer checks your evidence and may ask for more information. You will be told the outcome
+            by email, quoting your application reference.
+          </p>
+        </div>
       </div>
     </>
   );

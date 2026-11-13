@@ -466,6 +466,13 @@ export const pages = [
       {
         type: "hero",
         heading: "Competence and integrity in financial and investment analysis",
+        // CIFIAG event photographs (see apps/web/public/images/hero/README.md).
+        // CONFIRM: consent of the people pictured for use on the website.
+        slides: [
+          { src: "/images/hero/metad-high-table.jpg", alt: "" }, // METAD / investiture high table
+          { src: "/images/hero/investiture-ceremony.jpg", alt: "" }, // newly inducted members and fellows
+        ],
+        slideIntervalMs: 7000,
         summary:
           "The Chartered Institute of Financial and Investment Analysts, Ghana regulates and develops the profession, from the Professional Diploma to Chartered membership and Fellowship.",
         actions: [
