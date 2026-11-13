@@ -15,9 +15,11 @@ function initials(name: string) {
 
 /**
  * A signed message from an office holder (e.g. the CEO's welcome).
- * Source order is heading, then portrait, then message, so assistive
- * technology meets the heading first; CSS grid places the portrait beside
- * the text on wide screens.
+ *
+ * The portrait, quote and signature form one "message card" — a <figure>
+ * whose <figcaption> attributes the <blockquote>. The heading comes first in
+ * source order so assistive technology meets it before the card; CSS grid
+ * places the card beside the heading and priorities on wide screens.
  */
 export function LeaderMessage({ section }: { section: LeaderMessageSection }) {
   const headingId = useId();
@@ -30,8 +32,8 @@ export function LeaderMessage({ section }: { section: LeaderMessageSection }) {
           {section.heading}
         </h2>
 
-        <figure className="leader__person">
-          <div className="leader__frame">
+        <figure className="leader__card">
+          <div className="leader__portrait">
             {person.portrait ? (
               <img
                 className="leader__photo"
@@ -48,30 +50,32 @@ export function LeaderMessage({ section }: { section: LeaderMessageSection }) {
               </div>
             )}
           </div>
-          <figcaption className="leader__caption">
-            <span className="leader__name">{person.name}</span>
-            <span className="leader__role">{person.role}</span>
-          </figcaption>
+
+          <div className="leader__message">
+            <blockquote className="leader__quote">
+              <p>{section.quote}</p>
+            </blockquote>
+            <figcaption className="leader__signature">
+              <span className="leader__name">{person.name}</span>
+              <span className="leader__role">{person.role}</span>
+            </figcaption>
+          </div>
         </figure>
 
         <div className="leader__body">
-          <blockquote className="leader__quote">
-            <p>{section.quote}</p>
-          </blockquote>
-
           {section.intro && <p className="leader__intro">{section.intro}</p>}
 
           {section.points.length > 0 && (
-            <ul className="leader__points">
+            <ol className="leader__points">
               {section.points.map((point, i) => (
                 <li key={point} className="leader__point">
                   <span className="leader__num" aria-hidden="true">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span>{point}</span>
+                  <p className="leader__point-text">{point}</p>
                 </li>
               ))}
-            </ul>
+            </ol>
           )}
 
           {section.action && (
