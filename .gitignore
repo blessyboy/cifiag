@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+
+# Office lock files
+~$*
+
+# Local private uploads (never commit applicant data)
+storage/

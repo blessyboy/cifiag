@@ -1,0 +1,21 @@
+{
+  "name": "cifiag",
+  "private": true,
+  "description": "CIFIAG public website and management platform",
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w @cifiag/api\" \"npm run dev -w @cifiag/web\"",
+    "build": "npm run build -w @cifiag/api && npm run build -w @cifiag/web",
+    "typecheck": "npm run typecheck -w @cifiag/api && npm run typecheck -w @cifiag/web",
+    "test": "npm run test -w @cifiag/api",
+    "seed": "npm run seed -w @cifiag/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
